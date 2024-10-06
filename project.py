@@ -35,12 +35,12 @@ def retrieve_records(search_value):
             
             name = name.decode('utf-8').strip('\x00')
             category = category.decode('utf-8').strip('\x00')
-            
-            print(f"Checking record - ID: {record_id}, Name: '{name}', Price: {price}, Quantity: {quantity}, Category: '{category}'")
-            
-            if str(record_id) == search_value or name == search_value:
+                        
+            # Check for a match
+            if str(record_id) == search_value or name.lower() == search_value.lower():
                 print(f"Match found: ID: {record_id}, Name: {name}, Price: {price:.2f}, Quantity: {quantity}, Category: {category}")
                 found = True
+                break  # Exit the loop once a match is found
     
     if not found:
         print("No matching records found.")
@@ -65,9 +65,9 @@ def update_record(record_id, new_name, new_price, new_quantity, new_category):
             f.write(struct.pack('I20sfI15s', *rec))
 
     if updated:
-        print("Data has been updated successfully")
+        print("Data has been updated!")
     else:
-        print("No matching record found for update")
+        print("No matching record")
 
 def delete_record(record_id):
     records = []
@@ -88,9 +88,9 @@ def delete_record(record_id):
             f.write(struct.pack('I20sfI15s', *rec))
 
     if deleted:
-        print("Data has been deleted successfully")
+        print("Data has been deleted!")
     else:
-        print("No matching record found for deletion")
+        print("No matching record")
 
 def create_report():
     if not os.path.exists(FILENAME):
@@ -133,11 +133,14 @@ def menu():
             quantity = int(input("Please enter quantity: "))
             category = input("Please enter category: ")
             add_record(record_id, name, price, quantity, category)
+        
         elif choice == '2':
             display_records()
+        
         elif choice == '3':
             search_value = input("Please enter ID or name to search: ")
             retrieve_records(search_value)
+        
         elif choice == '4':
             record_id = int(input("Please enter the ID you want to update: "))
             new_name = input("Please enter new name: ")
@@ -145,16 +148,19 @@ def menu():
             new_quantity = int(input("Please enter new quantity: "))
             new_category = input("Please enter new category: ")
             update_record(record_id, new_name, new_price, new_quantity, new_category)
+        
         elif choice == '5':
             record_id = int(input("Please enter the ID you want to delete: "))
             delete_record(record_id)
+        
         elif choice == '6':
             create_report()
+        
         elif choice == '7':
-            print("Closing the program safely")
+            print("Closing the program")
             break
+        
         else:
-            print("Invalid option, please try again.")
+            print("Invalid option")
 
-if __name__ == "__main__":
-    menu()
+menu()
