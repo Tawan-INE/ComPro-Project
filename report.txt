@@ -1,0 +1,6 @@
+ID: 1, Name: Apple, Price: 1.50, Quantity: 10, Category: Fruit
+ID: 2, Name: Banana, Price: 0.75, Quantity: 20, Category: Fruit
+ID: 3, Name: Carrot, Price: 0.50, Quantity: 20, Category: Vegetable
+ID: 4, Name: Broccoli, Price: 1.20, Quantity: 8, Category: Vegetable
+ID: 5, Name: Water, Price: 0.50, Quantity: 50, Category: Drink
+ID: 6, Name: Orange Juice, Price: 2.00, Quantity: 25, Category: Drink

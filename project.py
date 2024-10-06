@@ -17,7 +17,7 @@ def display_records():
             if not record:
                 break
             record_id, name, price, quantity, category = struct.unpack('I20sfI15s', record)
-            print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price}, Quantity: {quantity}, Category: {category.decode('utf-8').strip()}")
+            print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price:.2f}, Quantity: {quantity}, Category: {category.decode('utf-8').strip()}")
 
 def retrieve_records(search_value):
     if not os.path.exists(FILENAME):
@@ -30,11 +30,18 @@ def retrieve_records(search_value):
             record = f.read(struct.calcsize('I20sfI15s'))
             if not record:
                 break
+            
             record_id, name, price, quantity, category = struct.unpack('I20sfI15s', record)
-            if str(record_id) == search_value or name.decode('utf-8').strip() == search_value:
-                print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price}, Quantity: {quantity}, Category: {category.decode('utf-8').strip()}")
+            
+            name = name.decode('utf-8').strip('\x00')
+            category = category.decode('utf-8').strip('\x00')
+            
+            print(f"Checking record - ID: {record_id}, Name: '{name}', Price: {price}, Quantity: {quantity}, Category: '{category}'")
+            
+            if str(record_id) == search_value or name == search_value:
+                print(f"Match found: ID: {record_id}, Name: {name}, Price: {price:.2f}, Quantity: {quantity}, Category: {category}")
                 found = True
-                
+    
     if not found:
         print("No matching records found.")
 
@@ -97,16 +104,12 @@ def create_report():
             if not record:
                 break
             record_id, name, price, quantity, category = struct.unpack('I20sfI15s', record)
-            line = f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price}, Quantity: {quantity}, Category: {category.decode('utf-8').strip()}"
+            name = name.decode('utf-8').strip('\x00')
+            category = category.decode('utf-8').strip('\x00')
+            line = f"ID: {record_id}, Name: {name}, Price: {price:.2f}, Quantity: {quantity}, Category: {category}"
             report_lines.append(line)
     
-    # Display report on console
-    print("\n----- Report -----")
-    for line in report_lines:
-        print(line)
-
-    # Save report to a text file
-    with open("report.txt", 'w') as report_file:
+    with open("report.txt", 'w', encoding='utf-8') as report_file:
         report_file.write("\n".join(report_lines))
     
     print("Report saved to report.txt")
@@ -125,11 +128,11 @@ def menu():
 
         if choice == '1':
             record_id = int(input("Please enter ID: "))
-            name = input("Please enter name (up to 20 characters): ")
+            name = input("Please enter name: ")
             price = float(input("Please enter price: "))
             quantity = int(input("Please enter quantity: "))
-            category = input("Please enter category (up to 15 characters): ")
-            add_record(record_id, name[:20], price, quantity, category[:15])
+            category = input("Please enter category: ")
+            add_record(record_id, name, price, quantity, category)
         elif choice == '2':
             display_records()
         elif choice == '3':
