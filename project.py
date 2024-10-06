@@ -144,7 +144,7 @@ def menu():
             new_price = float(input("Please enter new price: "))
             new_quantity = int(input("Please enter new quantity: "))
             new_category = input("Please enter new category: ")
-            update_record(record_id, new_name[:20], new_price, new_quantity, new_category[:15])
+            update_record(record_id, new_name, new_price, new_quantity, new_category)
         elif choice == '5':
             record_id = int(input("Please enter the ID you want to delete: "))
             delete_record(record_id)
