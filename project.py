@@ -75,7 +75,7 @@ def update_record(record_id, new_name, new_price, new_category, new_stock_status
 
     print("\n" + "-" * 50)
     if updated:
-        print("Data has been updated!")
+        print("Data has been updated!") 
     else:
         print("No matching record found.")
     print("-" * 50)
