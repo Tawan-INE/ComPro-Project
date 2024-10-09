@@ -24,11 +24,11 @@ def display_records():
         print("Data file not found")
         return
 
-    print("\n" + "-" * 50)
-    print("Current Records (sorted by ID):")
-    print("-" * 50)
+    print("\n" + "-" * 70)
+    print("{:<10} {:<20} {:<10} {:<15} {:<15}".format("ID", "Name", "Price", "Category", "Stock Status"))
+    print("-" * 70)
 
-    records = []  # แก้ไขที่นี่
+    records = []
 
     with open(FILENAME, 'rb') as f:
         while True:
@@ -41,9 +41,16 @@ def display_records():
     records.sort(key=lambda x: x[0])
 
     for record_id, name, price, category, stock_status in records:
-        print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price:.2f}, Category: {category.decode('utf-8').strip()}, Stock Status: {stock_status.decode('utf-8').strip()}")
+        print("{:<10} {:<20} {:<10.2f} {:<15} {:<15}".format(
+            record_id, 
+            name.decode('utf-8').strip('\x00'), 
+            price, 
+            category.decode('utf-8').strip('\x00'), 
+            stock_status.decode('utf-8').strip('\x00')
+        ))
     
-    print("-" * 50)
+    print("-" * 70)
+
 
 def retrieve_records(search_value):
     if not os.path.exists(FILENAME):
@@ -123,32 +130,53 @@ def delete_record(record_id):
         print("No matching record found.")
     print("-" * 50)
 
-def create_report():
+def create_report(sort_by="ID"):
     if not os.path.exists(FILENAME):
         print("Data file not found")
         return
     
     report_lines = []
+    records = []
+
+    report_lines.append("-" * 70)
+    report_lines.append("{:<10} {:<20} {:<10} {:<15} {:<15}".format("ID", "Name", "Price", "Category", "Stock Status"))
+    report_lines.append("-" * 70)
+    
     with open(FILENAME, 'rb') as f:
         while True:
             record = f.read(RECORD_SIZE)
             if not record:
                 break
             record_id, name, price, category, stock_status = struct.unpack(RECORD_FORMAT, record)
-            name = name.decode('utf-8').strip('\x00')
-            category = category.decode('utf-8').strip('\x00')
-            stock_status = stock_status.decode('utf-8').strip('\x00')
-            report_lines.append((record_id, f"ID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Stock Status: {stock_status}"))
-    
-    report_lines.sort(key=lambda x: x[0])
+            
+            records.append((
+                record_id, 
+                name.decode('utf-8').strip('\x00'), 
+                price, 
+                category.decode('utf-8').strip('\x00'), 
+                stock_status.decode('utf-8').strip('\x00')
+            ))
 
+    if sort_by == "ID":
+        records.sort(key=lambda x: x[0])
+    
+    for record_id, name, price, category, stock_status in records:
+        line = "{:<10} {:<20} {:<10.2f} {:<15} {:<15}".format(
+            record_id, name, price, category, stock_status
+        )
+        report_lines.append(line)
+    
+    report_lines.append("-" * 70)
+    
     with open("report.txt", 'w', encoding='utf-8') as report_file:
         for line in report_lines:
-            report_file.write(line[1] + "\n")
+            report_file.write(line + "\n")
     
     print("\n" + "-" * 50)
     print("Report saved to report.txt")
     print("-" * 50)
+
+
 
 def main():
     while True:
