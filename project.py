@@ -25,8 +25,10 @@ def display_records():
         return
 
     print("\n" + "-" * 50)
-    print("Current Records:")
+    print("Current Records (sorted by ID):")
     print("-" * 50)
+
+    records = []  # แก้ไขที่นี่
 
     with open(FILENAME, 'rb') as f:
         while True:
@@ -34,7 +36,13 @@ def display_records():
             if not record:
                 break
             record_id, name, price, category, stock_status = struct.unpack(RECORD_FORMAT, record)
-            print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price:.2f}, Category: {category.decode('utf-8').strip()}, Stock Status: {stock_status.decode('utf-8').strip()}")
+            records.append((record_id, name, price, category, stock_status))
+
+    records.sort(key=lambda x: x[0])
+
+    for record_id, name, price, category, stock_status in records:
+        print(f"ID: {record_id}, Name: {name.decode('utf-8').strip()}, Price: {price:.2f}, Category: {category.decode('utf-8').strip()}, Stock Status: {stock_status.decode('utf-8').strip()}")
+    
     print("-" * 50)
 
 def retrieve_records(search_value):
@@ -130,11 +138,13 @@ def create_report():
             name = name.decode('utf-8').strip('\x00')
             category = category.decode('utf-8').strip('\x00')
             stock_status = stock_status.decode('utf-8').strip('\x00')
-            line = f"ID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Stock Status: {stock_status}"
-            report_lines.append(line)
+            report_lines.append((record_id, f"ID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Stock Status: {stock_status}"))
     
+    report_lines.sort(key=lambda x: x[0])
+
     with open("report.txt", 'w', encoding='utf-8') as report_file:
-        report_file.write("\n".join(report_lines))
+        for line in report_lines:
+            report_file.write(line[1] + "\n")
     
     print("\n" + "-" * 50)
     print("Report saved to report.txt")

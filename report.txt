@@ -1,3 +1,4 @@
+ID: 1, Name: Apple, Price: 1.50, Category: Fruit, Stock Status: In Stock
 ID: 2, Name: Banana, Price: 0.75, Category: Fruit, Stock Status: In Stock
 ID: 3, Name: Carrot, Price: 0.50, Category: Vegetable, Stock Status: Out Stock
 ID: 4, Name: Broccoli, Price: 1.20, Category: Vegetable, Stock Status: In Stock
@@ -5,6 +6,5 @@ ID: 5, Name: Water Bottle, Price: 0.50, Category: Drink, Stock Status: In Stock
 ID: 6, Name: Orange Juice, Price: 2.00, Category: Drink, Stock Status: Out Stock
 ID: 7, Name: Bread, Price: 1.00, Category: Baked Goods, Stock Status: In Stock
 ID: 8, Name: Eggs, Price: 2.50, Category: Dairy, Stock Status: In Stock
-ID: 1, Name: Apple, Price: 1.50, Category: Fruit, Stock Status: In Stock
 ID: 9, Name: Pen, Price: 2.00, Category: Stationery, Stock Status: In Stock
 ID: 10, Name: Pencil, Price: 1.00, Category: Stationery, Stock Status: Out Stock
