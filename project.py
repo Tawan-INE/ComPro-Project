@@ -6,8 +6,18 @@ RECORD_FORMAT = 'I20sf20s10s'
 RECORD_SIZE = struct.calcsize(RECORD_FORMAT)
 
 def add_record(record_id, name, price, category, stock_status):
-    with open(FILENAME, 'ab') as f:
-        f.write(struct.pack(RECORD_FORMAT, record_id, name.encode('utf-8'), price, category.encode('utf-8'), stock_status.encode('utf-8')))
+    try:
+        with open(FILENAME, 'ab') as f:
+            f.write(struct.pack(RECORD_FORMAT, record_id, name.encode('utf-8'), price, category.encode('utf-8'), stock_status.encode('utf-8')))
+        
+        print("\n" + "-" * 50)
+        print(f"Record added successfully! ID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Stock Status: {stock_status}")
+        print("-" * 50)
+
+    except Exception as e:
+        print("\n" + "-" * 50)
+        print(f"Failed to add record: {str(e)}")
+        print("-" * 50)
 
 def display_records():
     if not os.path.exists(FILENAME):
@@ -150,7 +160,7 @@ def main():
             name = input("Please enter name: ")
             price = float(input("Please enter price: "))
             category = input("Please enter category: ")
-            stock_status = input("Please enter stock status (In Stock / Out of Stock): ")
+            stock_status = input("Please enter stock status (In Stock / Out Stock): ")
             add_record(record_id, name, price, category, stock_status)
         
         elif choice == 2:
