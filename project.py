@@ -11,12 +11,12 @@ def add_record(record_id, name, price, category, quantity):
             f.write(struct.pack(RECORD_FORMAT, record_id, name.encode('utf-8'), price, category.encode('utf-8'), quantity))
         
         print("\n" + "-" * 50)
-        print(f"Record added successfully! ID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Quantity: {quantity}")
+        print(f"Data added successfully!\nID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Quantity: {quantity}")
         print("-" * 50)
 
     except Exception as e:
         print("\n" + "-" * 50)
-        print(f"Failed to add record: {str(e)}")
+        print(f"Failed to add Data: {str(e)}")
         print("-" * 50)
 
 def display_records():
@@ -108,7 +108,8 @@ def update_record(record_id):
                 updated = True
             else:
                 records.append((rec_id, name, price, category, quantity))
-    
+            name = name.decode('utf-8').strip('\x00')
+            category = category.decode('utf-8').strip('\x00')
     with open(FILENAME, 'wb') as f:
         for rec in records:
             f.write(struct.pack(RECORD_FORMAT, *rec))
@@ -133,14 +134,15 @@ def delete_record(record_id):
                 records.append((rec_id, name, price, category, quantity))
             else:
                 deleted = True
-    
+            name = name.decode('utf-8').strip('\x00')
+            category = category.decode('utf-8').strip('\x00')
     with open(FILENAME, 'wb') as f:
         for rec in records:
             f.write(struct.pack(RECORD_FORMAT, *rec))
 
     print("\n" + "-" * 50)
     if deleted:
-        print("Data has been deleted!")
+        print(f"Data has been deleted!\nID: {record_id}, Name: {name}, Price: {price:.2f}, Category: {category}, Quantity: {quantity}")
     else:
         print("No matching record found.")
     print("-" * 50)
@@ -167,11 +169,14 @@ def create_report():
             records[category].append((record_id, name, price, quantity))
     
     total_price_all = 0
+    total_quantity_all = 0
+    total_quantity_in_stock_all = 0
+    total_categories = len(records)
 
     for category, items in records.items():
         total_price = 0
         total_quantity_in_stock = 0
-        total_quantity_all = len(items)
+        total_quantity_category = len(items)
 
         report_lines.append(f"\n หมวดหมู่: {category}")
         report_lines.append("-" * 60)
@@ -184,16 +189,19 @@ def create_report():
             total_quantity_in_stock += quantity
         
         report_lines.append("-" * 60)
-        
-        report_lines.append(f"ราคารวม: {total_price:.2f}, จำนวนสินค้าทั้งหมดในหมวดหมู่: {total_quantity_all}")
+        report_lines.append(f"ราคารวม: {total_price:.2f}, จำนวนสินค้าทั้งหมดในหมวดหมู่: {total_quantity_category}")
         report_lines.append(f"จำนวนของสินค้าที่มีอยู่ในสต็อก: {total_quantity_in_stock}")
         report_lines.append("=" * 60)
 
         total_price_all += total_price
+        total_quantity_all += total_quantity_category
+        total_quantity_in_stock_all += total_quantity_in_stock
 
-    report_lines.append("สรุปรวมทั้งหมด")
+    report_lines.append("\nสรุปรวมทั้งหมด")
     report_lines.append("-" * 60)
     report_lines.append(f"ราคารวมทั้งหมด: {total_price_all:.2f}")
+    report_lines.append(f"จำนวนสินค้าทั้งหมด: {total_quantity_all}")
+    report_lines.append(f"จำนวนหมวดหมู่ทั้งหมด: {total_categories}")
     report_lines.append("-" * 60)
     report_lines.append("\n")
 
@@ -218,7 +226,10 @@ def main():
         print("6. Create report")
         print("7. Exit program")
         
-        choice = int(input("Please choose an option (1-7): "))
+        try:
+            choice = int(input("Please choose an option (1-7): "))
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 7.")
 
         if choice == 1:
             record_id = int(input("Please enter ID: "))
@@ -252,11 +263,16 @@ def main():
         elif choice == 6:
             create_report()
         
-        elif choice == 7: 
-            print("Closing the program")
-            break
-        
-        else:
-            print("Invalid option")
+        elif choice == 7:
+            user_input = input("Please confirm to Exit the Program (y / n): ").lower()
+            if user_input == 'y':
+                print("Exiting the program")
+                break
+            elif user_input == 'n':
+                print("Returning the program")
+                continue
+            else:
+                print("Invalid input, please enter 'y' for yes or 'n' for no.")
+                continue
 
 main()
